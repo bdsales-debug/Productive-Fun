@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unkai Pagoda</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="An explorable 3D interior of an imagined timber pagoda above a sea of clouds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+</head>
+<body>
+<div id="app">
+  <canvas id="scene" aria-label="3D view of the pagoda interior"></canvas>
+  <div id="vignette" aria-hidden="true"></div>
+  <div id="fade" aria-hidden="true"></div>
+
+  <div id="crosshair" aria-hidden="true"><span></span></div>
+  <div id="aimLabel" aria-live="polite"></div>
+
+  <div id="hud">
+    <header class="panel" id="place">
+      <p class="eyebrow">Unkai-ji · 雲海寺</p>
+      <p class="where" id="where">Atrium</p>
+    </header>
+
+    <div class="tools" role="toolbar" aria-label="Scene settings">
+      <button type="button" class="tool" id="timeBtn" aria-pressed="false" title="Change the time of day (T)">Evening</button>
+      <button type="button" class="tool" id="soundBtn" aria-pressed="false" title="Sound (M)">Sound off</button>
+      <button type="button" class="tool" id="resetBtn" title="Return to the atrium (R)">Reset view</button>
+      <button type="button" class="tool" id="hideBtn" title="Hide the interface (H)">Hide interface</button>
+    </div>
+
+    <nav class="dock panel" aria-label="Navigation">
+      <div class="seg" role="radiogroup" aria-label="Navigation mode">
+        <button type="button" role="radio" aria-checked="true" data-mode="walk" id="walkBtn">Walk</button>
+        <button type="button" role="radio" aria-checked="false" data-mode="orbit" id="orbitBtn">Orbit</button>
+      </div>
+      <div class="views" id="views"></div>
+    </nav>
+
+    <p class="hint" id="hint"></p>
+  </div>
+
+  <aside id="card" class="panel" hidden aria-live="polite">
+    <button type="button" class="close" id="cardClose" aria-label="Close">×</button>
+    <p class="jp" id="cardJp"></p>
+    <h2 id="cardTitle"></h2>
+    <p id="cardText"></p>
+    <button type="button" class="action" id="cardAction" hidden></button>
+  </aside>
+
+  <div id="joystick" hidden aria-hidden="true"><div class="knob"></div></div>
+  <button type="button" id="showUi" hidden>Show interface</button>
+
+  <section id="intro" aria-labelledby="introTitle">
+    <div class="intro-inner">
+      <p class="eyebrow">An explorable interior</p>
+      <h1 id="introTitle">Unkai-ji</h1>
+      <p class="sub">雲海寺 · the temple above the sea of clouds</p>
+      <p class="lede">A three-storey timber pagoda on a mountaintop. Stand in its lantern-lit atrium, climb the steep stairs to the galleries, ring the bell, and find the hall behind the carved doorway.</p>
+      <div class="loader" id="loader">
+        <div class="bar"><span id="loadBar"></span></div>
+        <p id="loadText">Preparing the timber</p>
+      </div>
+      <button type="button" id="enterBtn" class="enter" hidden>Enter the pagoda</button>
+      <ul class="keys" id="keys">
+        <li><kbd>W A S D</kbd> walk</li>
+        <li><kbd>Mouse</kbd> look around</li>
+        <li><kbd>Shift</kbd> walk faster</li>
+        <li><kbd>E</kbd> or click a ring to inspect</li>
+        <li><kbd>1</kbd>–<kbd>5</kbd> viewpoints</li>
+        <li><kbd>O</kbd> orbit · <kbd>H</kbd> hide interface</li>
+      </ul>
+      <p class="error" id="error" hidden></p>
+    </div>
+  </section>
+</div>
+<script type="module" src="./src/main.ts"></script>
+</body>
+</html>

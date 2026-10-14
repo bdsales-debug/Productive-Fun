@@ -17,3 +17,7 @@ python3 -m http.server
 ```
 
 Assets: `assets/cover.jpg` (the cover) and `assets/pagoda.png` (the sketch, cropped and converted to a transparent ink mask).
+
+## Unkai-ji (pagoda-interior/)
+
+An explorable 3D interior of an imagined timber pagoda above a sea of clouds, built with Three.js and TypeScript. The pen sketch hangs inside it as a scroll. See [pagoda-interior/README.md](pagoda-interior/README.md).
