@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- artifact:start -->
+<title>Riso Pagoda Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DM+Mono:wght@400;500&family=Zen+Maru+Gothic:wght@400;700&display=swap">
+<style>
+/* Layout: a riso-printed field notebook on grid paper. Full-bleed bands, each holding one hands-on "test" framed like the cover's mint panels. */
+:root {
+  --paper: #F6E9C9;
+  --paper-2: #FBF4E2;
+  --grid: #E7D7AF;
+  --ink: #1F1B17;
+  --ink-soft: #4E463C;
+  --orange: #EF5B25;
+  --mint: #86D6C1;
+  --teal: #128C7E;
+  --white: #FFFDF6;
+
+  --f-display: "Dela Gothic One", "Arial Black", "Hiragino Sans", system-ui, sans-serif;
+  --f-body: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Trebuchet MS", system-ui, sans-serif;
+  --f-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
+  --step-3: clamp(3rem, 1.6rem + 6.4vw, 7.25rem);
+
+  --shadow: 8px 8px 0 var(--ink);
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+body::after { /* paper grain over everything */
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .1 0 0 0 0 .08 -1.6 0 0 0 1.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: .16; mix-blend-mode: multiply;
+}
+
+.wrap {
+  max-width: 1180px; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.band { padding-block: clamp(56px, 8vw, 104px); position: relative; }
+.band + .band { border-top: 2px dashed var(--grid); }
+
+h1, h2 { font-family: var(--f-display); font-weight: 400; line-height: 1.02; text-wrap: balance; margin: 0; }
+h2 { font-size: var(--step-2); }
+p { margin: 0; max-width: 62ch; }
+.label {
+  font-family: var(--f-mono); font-size: var(--step--1); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.lede { font-size: var(--step-1); line-height: 1.5; }
+
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  font: 700 var(--step-0)/1 var(--f-body);
+  color: var(--ink); background: var(--white);
+  border: 2px solid var(--ink); border-radius: 999px;
+  padding: .7em 1.2em; cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s;
+}
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--ink); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+.btn.primary { background: var(--orange); color: var(--white); }
+.btn[aria-pressed="true"] { background: var(--mint); }
+.btn:disabled { opacity: .55; cursor: progress; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+/* ---------- hero ---------- */
+#hero { overflow: hidden; padding-block: clamp(84px, 11vw, 140px) clamp(72px, 9vw, 120px); cursor: grab; user-select: none; -webkit-user-select: none; }
+#hero.magnet { cursor: none; }
+@media (max-width: 759px) { #hero { padding-block: 120px 170px; } }
+#floaters { position: absolute; inset: 0; pointer-events: none; }
+.fl { position: absolute; left: 0; top: 0; will-change: transform; }
+.fl svg { display: block; width: 100%; height: auto; overflow: visible; }
+.fl .eyes { transform-box: fill-box; transform-origin: 50% 50%; transition: transform .08s; }
+.fl.blink .eyes { transform: scaleY(.1); }
+.fl .pupil { transform: translate(var(--px, 0px), var(--py, 0px)); }
+#hero.magnet .fl .eye ellipse { transform-box: fill-box; transform-origin: center; transform: scale(1.25); }
+
+.hero-copy { position: relative; z-index: 2; display: grid; gap: 22px; max-width: 640px; }
+.title {
+  font-size: var(--step-3); position: relative; color: var(--ink);
+  isolation: isolate;
+}
+.title span { display: block; position: relative; }
+.title span::before, .title span::after {
+  content: attr(data-t); position: absolute; inset: 0; z-index: -1;
+  mix-blend-mode: multiply;
+  transition: transform .3s cubic-bezier(.3,1.6,.5,1);
+}
+.title span::before { color: var(--mint); transform: translate(var(--mx1, -5px), var(--my1, 4px)); }
+.title span::after { color: var(--orange); transform: translate(var(--mx2, 6px), var(--my2, -3px)); }
+#hero.magnet .title span::before { transform: translate(-14px, 9px); }
+#hero.magnet .title span::after { transform: translate(15px, -8px); }
+.hint { font-family: var(--f-mono); font-size: var(--step--1); color: var(--ink-soft); }
+.hint kbd { font-family: inherit; border: 1.5px solid var(--ink); border-radius: 4px; padding: 0 .35em; background: var(--white); color: var(--ink); }
+#magnetCursor {
+  position: absolute; left: 0; top: 0; width: 46px; height: 46px; z-index: 3;
+  pointer-events: none; opacity: 0; transition: opacity .15s;
+}
+#hero.magnet #magnetCursor { opacity: 1; }
+
+/* ---------- section heads ---------- */
+.head { display: grid; gap: 12px; margin-bottom: clamp(28px, 4vw, 44px); }
+.head p { color: var(--ink-soft); }
+
+/* panel = mint frame with offset ink shadow, like the cover's boxes */
+.panel {
+  background: var(--mint); border: 2px solid var(--ink); border-radius: 6px;
+  box-shadow: var(--shadow); padding: clamp(10px, 2vw, 18px);
+}
+.sheet {
+  position: relative; background: var(--paper-2); border: 2px solid var(--ink);
+  border-radius: 3px; overflow: hidden;
+}
+
+.split { display: grid; gap: clamp(28px, 5vw, 64px); grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; }
+.split > * { min-width: 0; }
+.split.flip { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+@media (max-width: 820px) {
+  .split, .split.flip { grid-template-columns: minmax(0, 1fr); }
+  .split.flip > .side { order: -1; }
+}
+.side { display: grid; gap: 22px; }
+
+/* ---------- lens ---------- */
+.pagoda { aspect-ratio: 980 / 1120; width: 100%; max-width: 100%; }
+.mask {
+  position: absolute; inset: 0;
+  -webkit-mask-image: url(assets/pagoda.png); mask-image: url(assets/pagoda.png);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+}
+.ink { background: var(--ink); }
+#lensStage { cursor: crosshair; touch-action: pan-y; }
+#lens {
+  position: absolute; left: 0; top: 0; width: clamp(130px, 38%, 240px); aspect-ratio: 1;
+  touch-action: none; cursor: grab; z-index: 2;
+}
+#lens .glass {
+  position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background: var(--mint);
+  box-shadow: 0 0 0 7px var(--white), 0 0 0 10px var(--ink), 6px 8px 0 10px var(--ink);
+}
+#lens .glass .mask { -webkit-mask-size: auto; mask-size: auto; mix-blend-mode: multiply; }
+#lens .lens-teal { background: var(--teal); }
+#lens .lens-orange { background: var(--orange); }
+#lens .glint { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 30% 26%, rgba(255,253,246,.55) 0 9%, transparent 10%); pointer-events: none; }
+#lens .handle {
+  position: absolute; width: 22%; height: 60%; left: 86%; top: 74%;
+  background: var(--orange); border: 2.5px solid var(--ink); border-radius: 10px;
+  transform: rotate(-45deg); transform-origin: 50% 0; z-index: -1;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.readout { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 18px; margin: 0; font-family: var(--f-mono); font-size: var(--step--1); }
+.readout dt { color: var(--ink-soft); text-transform: uppercase; letter-spacing: .08em; }
+.readout dd { margin: 0; font-variant-numeric: tabular-nums; }
+.readout dd strong { font-family: var(--f-body); font-size: var(--step-1); }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 700; }
+input[type="range"] { width: 100%; accent-color: var(--orange); }
+
+/* ---------- press ---------- */
+#printSheet .plate { mix-blend-mode: multiply; }
+#printSheet .speckle {
+  position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .99 0 0 0 0 .95 -3 0 0 0 1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+}
+#roller {
+  position: absolute; left: -2%; right: -2%; top: 0; height: 22px; opacity: 0; z-index: 3;
+  background: repeating-linear-gradient(90deg, var(--ink) 0 2px, var(--ink-soft) 2px 9px);
+  border-radius: 11px; box-shadow: 0 6px 0 rgba(31,27,23,.18);
+}
+.stamp {
+  position: absolute; right: 12px; bottom: 10px; z-index: 2;
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.drum { display: grid; gap: 10px; }
+.drum-name { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.drum-name b { font-weight: 700; }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw {
+  width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--ink);
+  background: var(--c); cursor: pointer; padding: 0; position: relative;
+  box-shadow: 2px 2px 0 var(--ink); transition: transform .12s;
+}
+.sw:hover { transform: translateY(-2px); }
+.sw[aria-checked="true"]::after {
+  content: ""; position: absolute; inset: -7px; border-radius: 50%; border: 2px dashed var(--ink);
+}
+
+/* ---------- puzzle ---------- */
+#board {
+  position: relative; width: 100%; max-width: 100%; aspect-ratio: 1200 / 740;
+  background: var(--ink); overflow: hidden;
+}
+.tile {
+  position: absolute; left: 0; top: 0; width: 25%; height: 33.3334%;
+  border: 0; padding: 0; margin: 0; cursor: pointer;
+  background-image: url(assets/cover.jpg); background-size: 400% 300%;
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+  transition: transform .18s cubic-bezier(.3,1.3,.5,1), filter .12s;
+}
+.tile.movable:hover { filter: brightness(1.08) saturate(1.1); }
+.tile.movable { z-index: 1; }
+.tile.empty { opacity: 0; pointer-events: none; transition: opacity .5s; }
+#board.solved .tile.empty { opacity: 1; }
+#board.solved .tile { box-shadow: none; cursor: default; }
+.tile.nope { animation: nope .28s; }
+@keyframes nope { 25% { translate: -4px 0; } 75% { translate: 4px 0; } }
+#peekImg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 4; }
+#board.peek #peekImg { opacity: 1; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.stat { border: 2px solid var(--ink); border-radius: 6px; background: var(--paper-2); padding: 12px 14px; display: grid; gap: 2px; }
+.stat b { font-family: var(--f-display); font-weight: 400; font-size: var(--step-2); line-height: 1; font-variant-numeric: tabular-nums; }
+#status { min-height: 1.6em; font-weight: 700; }
+@media (max-width: 820px) { .thumb { display: none; } }
+.thumb { border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--ink); display: block; width: 100%; height: auto; }
+.confetti { position: fixed; left: 0; top: 0; width: 26px; pointer-events: none; z-index: 60; }
+
+footer { padding-block: 40px 56px; border-top: 2px solid var(--ink); }
+footer p { font-size: var(--step--1); color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; animation: none !important; }
+}
+</style>
+<!-- artifact:end -->
+</head>
+<body>
+<!-- artifact:start -->
+<header id="hero" class="band" aria-labelledby="t">
+  <div id="floaters" aria-hidden="true"></div>
+  <svg id="magnetCursor" viewBox="0 0 46 46" aria-hidden="true">
+    <path d="M9 4h10v20a4 4 0 0 0 8 0V4h10v20a14 14 0 0 1-28 0z" fill="var(--teal)" stroke="var(--ink)" stroke-width="2" transform="translate(2 2)"/>
+    <path d="M9 4h10v8H9zM27 4h10v8H27z" fill="var(--orange)" stroke="var(--ink)" stroke-width="2" transform="translate(2 2)"/>
+  </svg>
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="label">Field notebook · Vol. 3上 · two inks, one pagoda</span>
+      <h1 class="title" id="t"><span data-t="Riso Pagoda">Riso Pagoda</span><span data-t="Lab">Lab</span></h1>
+      <p class="lede">A pen sketch of a pagoda walks into a riso-printed science textbook. Inspect it with a lens, run it through a two-drum press, then put the textbook cover back together.</p>
+      <div class="row">
+        <button class="btn" id="magnetBtn" type="button" aria-pressed="false">Magnet off</button>
+        <span class="hint">or hold the mouse anywhere up here · the clouds are watching</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band" aria-labelledby="lensH">
+    <div class="wrap split">
+      <div class="side">
+        <div class="head">
+          <span class="label">Lens test</span>
+          <h2 id="lensH">Look closer at the pagoda</h2>
+          <p>Move the magnifier over the ink drawing. Under the glass, every stroke prints in two slightly misaligned riso colours. On a phone, tap the drawing or drag the lens.</p>
+        </div>
+        <dl class="readout" aria-live="polite">
+          <dt>Specimen</dt><dd><strong id="specName">Upper roof</strong></dd>
+          <dt>Note</dt><dd id="specNote">Hatching follows the slope of the tiles.</dd>
+          <dt>Position</dt><dd id="specPos">x 490 · y 400 px</dd>
+          <dt>Power</dt><dd id="specZoom">2.6×</dd>
+        </dl>
+        <div class="field">
+          <label for="zoom">Magnification</label>
+          <input id="zoom" type="range" min="1.5" max="4.5" step="0.1" value="2.6">
+        </div>
+      </div>
+      <div class="panel">
+        <div class="sheet pagoda" id="lensStage" tabindex="0" role="img" aria-label="Ink sketch of a multi-storey pagoda with a magnifying lens. Use arrow keys to move the lens.">
+          <div class="mask ink"></div>
+          <div id="lens">
+            <div class="handle"></div>
+            <div class="glass">
+              <div class="mask lens-teal"></div>
+              <div class="mask lens-orange"></div>
+              <div class="glint"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="pressH">
+    <div class="wrap split flip">
+      <div class="panel">
+        <div class="sheet pagoda" id="printSheet">
+          <div class="mask plate" id="plateA"></div>
+          <div class="mask plate" id="plateB"></div>
+          <div class="speckle"></div>
+          <div id="roller"></div>
+          <span class="stamp" id="stamp">No. 001 · 2-colour · A4</span>
+        </div>
+      </div>
+      <div class="side">
+        <div class="head">
+          <span class="label">Press test</span>
+          <h2 id="pressH">Pull a two-drum riso print</h2>
+          <p>A risograph prints one ink per drum, and the second pass never lands exactly on the first. Pick an ink for each drum, set how sloppy the registration is, then pull a print.</p>
+        </div>
+        <div class="drum" data-drum="A">
+          <div class="drum-name"><b>Drum 1</b><span class="label" id="nameA">Teal</span></div>
+          <div class="swatches" role="radiogroup" aria-label="Drum 1 ink"></div>
+        </div>
+        <div class="drum" data-drum="B">
+          <div class="drum-name"><b>Drum 2</b><span class="label" id="nameB">Orange</span></div>
+          <div class="swatches" role="radiogroup" aria-label="Drum 2 ink"></div>
+        </div>
+        <div class="field">
+          <label for="mis">Misregistration <span class="label" id="misOut">6 px</span></label>
+          <input id="mis" type="range" min="0" max="18" step="1" value="6">
+        </div>
+        <div class="row">
+          <button class="btn primary" id="pullBtn" type="button">Pull a print</button>
+          <button class="btn" id="nudgeBtn" type="button">Bump the paper</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="puzH">
+    <div class="wrap split flip">
+      <div class="panel">
+        <div id="board" role="group" aria-label="Sliding puzzle of the textbook cover. Use arrow keys to slide tiles into the gap." tabindex="0">
+          <img id="peekImg" src="assets/cover.jpg" alt="">
+        </div>
+      </div>
+      <div class="side">
+        <div class="head">
+          <span class="label">Puzzle test</span>
+          <h2 id="puzH">Put the textbook cover back together</h2>
+          <p>Someone dropped the cover of a grade-3 nature and technology handbook. Slide the tiles into the gap until the cloud creatures are whole again.</p>
+        </div>
+        <img class="thumb" src="assets/cover.jpg" alt="Reference: the textbook cover, with mint panels, orange cloud creatures, a beaker, a magnet and flowers." width="1200" height="740" loading="lazy">
+        <div class="stats">
+          <div class="stat"><span class="label">Moves</span><b id="moves">0</b></div>
+          <div class="stat"><span class="label">Your best</span><b id="best">–</b></div>
+        </div>
+        <p id="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn primary" id="shuffleBtn" type="button">Shuffle</button>
+          <button class="btn" id="peekBtn" type="button" aria-pressed="false">Peek</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Cover art: 自然與生活科技 3上 教師手冊, 美感細胞出版. Pagoda: pen-and-ink sketch. Riso ink colours are approximations of the standard drum inks.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} }
+  };
+
+  /* =============== HERO: floaters, eyes, magnet =============== */
+  const hero = $('#hero'), field = $('#floaters'), cursorEl = $('#magnetCursor');
+  const CLOUD = 'M12 56C2 56 2 42 14 40 12 26 28 20 38 26 42 12 62 8 70 20 78 10 98 14 98 28 112 26 120 40 112 50 114 54 112 56 106 56Z';
+  const svgs = {
+    cloud: (c) => `<svg viewBox="0 0 124 66"><path d="${CLOUD}" transform="translate(5 5)" fill="var(--ink)"/><path d="${CLOUD}" fill="${c}" stroke="var(--ink)" stroke-width="1.5"/>
+      <g class="eyes"><g class="eye"><ellipse cx="56" cy="38" rx="5.5" ry="6.5" fill="var(--white)" stroke="var(--ink)" stroke-width="1.6"/><circle class="pupil" cx="56" cy="38" r="2.6" fill="var(--ink)"/></g>
+      <g class="eye"><ellipse cx="72" cy="38" rx="5.5" ry="6.5" fill="var(--white)" stroke="var(--ink)" stroke-width="1.6"/><circle class="pupil" cx="72" cy="38" r="2.6" fill="var(--ink)"/></g></g></svg>`,
+    bolt: () => `<svg viewBox="0 0 30 46"><polygon points="17,0 3,26 13,26 8,46 27,16 16,16 22,0" transform="translate(3 3)" fill="var(--ink)"/><polygon points="17,0 3,26 13,26 8,46 27,16 16,16 22,0" fill="var(--orange)" stroke="var(--ink)" stroke-width="1.5"/></svg>`,
+    ring: () => `<svg viewBox="0 0 50 50"><circle cx="27" cy="27" r="22" fill="var(--ink)"/><circle cx="25" cy="25" r="22" fill="var(--orange)" stroke="var(--ink)" stroke-width="1.5"/><circle cx="25" cy="25" r="8" fill="var(--teal)" stroke="var(--ink)" stroke-width="1.5"/></svg>`,
+    blob: () => `<svg viewBox="0 0 40 40"><circle cx="22" cy="22" r="17" fill="var(--ink)"/><circle cx="20" cy="20" r="17" fill="var(--orange)" stroke="var(--ink)" stroke-width="1.5"/></svg>`,
+    prism: () => `<svg viewBox="0 0 92 34"><polygon points="1,11 13,1 91,1 79,11" fill="var(--mint)" stroke="var(--ink)" stroke-width="1.5"/><polygon points="1,11 79,11 79,33 1,33" fill="var(--teal)" stroke="var(--ink)" stroke-width="1.5"/><polygon points="79,11 91,1 91,23 79,33" fill="var(--orange)" stroke="var(--ink)" stroke-width="1.5"/></svg>`
+  };
+  // x,y = desktop home (fractions of hero); m = narrow-screen home
+  const defs = [
+    { t: 'cloud', c: 'var(--orange)', w: 190, x: .73, y: .16, m: [.7, .07] },
+    { t: 'cloud', c: 'var(--mint)',   w: 150, x: .9,  y: .6,  m: [.24, .91] },
+    { t: 'cloud', c: 'var(--orange)', w: 110, x: .56, y: .88, m: [.78, .93] },
+    { t: 'cloud', c: 'var(--teal)',   w: 92,  x: .04, y: .07, m: [.12, .06] },
+    { t: 'ring',  w: 58, x: .93, y: .22, m: [.95, .87] },
+    { t: 'blob',  w: 40, x: .63, y: .44, m: [.5, .95] },
+    { t: 'blob',  w: 24, x: .97, y: .9,  m: [.6, .86] },
+    { t: 'blob',  w: 18, x: .78, y: .36, m: [.62, .12] },
+    { t: 'bolt',  w: 40, x: .79, y: .8,  m: [.04, .95] },
+    { t: 'bolt',  w: 30, x: .66, y: .68, m: [.93, .04] },
+    { t: 'prism', w: 120, x: .84, y: .4, m: [.4, .08], r: -20 },
+  ];
+  const items = defs.map((d, i) => {
+    const el = document.createElement('div');
+    el.className = 'fl';
+    el.style.width = d.w + 'px';
+    el.innerHTML = svgs[d.t](d.c);
+    field.appendChild(el);
+    return { d, el, i, x: 0, y: 0, vx: 0, vy: 0, hx: 0, hy: 0, w: 0, h: 0,
+      rot: d.r ?? (i % 2 ? 8 : -8), ph: Math.random() * 6.28, sp: .6 + Math.random() * .6,
+      pupils: [...el.querySelectorAll('.pupil')] };
+  });
+
+  let W = 0, H = 0, narrow = false;
+  function layout() {
+    W = hero.clientWidth; H = hero.clientHeight; narrow = W < 760;
+    const scale = narrow ? .72 : 1;
+    items.forEach(it => {
+      it.el.style.width = it.d.w * scale + 'px';
+      it.w = it.el.offsetWidth; it.h = it.el.offsetHeight;
+      const [fx, fy] = narrow ? it.d.m : [it.d.x, it.d.y];
+      it.hx = fx * W; it.hy = fy * H;
+      if (!it.x) { it.x = it.hx; it.y = it.hy; }
+    });
+    if (reduce) items.forEach(it => { it.x = it.hx; it.y = it.hy; draw(it, 0); });
+  }
+
+  const ptr = { x: 0, y: 0, has: false };
+  let holding = false, sticky = false, visible = true;
+  const magnetOn = () => holding || sticky;
+  const setMagnetClass = () => hero.classList.toggle('magnet', magnetOn());
+  function toLocal(e) {
+    const r = hero.getBoundingClientRect();
+    ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; ptr.has = true;
+  }
+  window.addEventListener('pointermove', e => {
+    toLocal(e);
+    cursorEl.style.transform = `translate(${ptr.x - 23}px, ${ptr.y - 23}px)`;
+    if (reduce) items.forEach(it => draw(it, 0));
+  }, { passive: true });
+  hero.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || e.target.closest('button, a')) return;
+    toLocal(e);
+    cursorEl.style.transform = `translate(${ptr.x - 23}px, ${ptr.y - 23}px)`;
+    holding = true; setMagnetClass();
+  });
+  const release = () => { holding = false; setMagnetClass(); };
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', release);
+  const magnetBtn = $('#magnetBtn');
+  magnetBtn.addEventListener('click', () => {
+    sticky = !sticky;
+    magnetBtn.setAttribute('aria-pressed', sticky);
+    magnetBtn.textContent = sticky ? 'Magnet on' : 'Magnet off';
+    if (sticky && !ptr.has) { ptr.x = W * (narrow ? .5 : .75); ptr.y = H * .5; }
+    setMagnetClass();
+  });
+
+  function draw(it, t) {
+    const tilt = it.rot + Math.max(-25, Math.min(25, it.vx * 2.2));
+    it.el.style.transform = `translate(${it.x - it.w / 2}px, ${it.y - it.h / 2}px) rotate(${tilt}deg)`;
+    if (it.pupils.length) {
+      let dx = 0, dy = 0;
+      if (ptr.has) {
+        const ex = ptr.x - it.x, ey = ptr.y - it.y, len = Math.hypot(ex, ey) || 1;
+        const m = Math.min(1, len / 120) * 2.6;
+        dx = ex / len * m; dy = ey / len * m;
+      }
+      it.el.style.setProperty('--px', dx.toFixed(2) + 'px');
+      it.el.style.setProperty('--py', dy.toFixed(2) + 'px');
+    }
+  }
+
+  let last = performance.now();
+  function tick(now) {
+    const f = Math.min(3, (now - last) / 16.67); last = now;
+    const t = now / 1000, mag = magnetOn() && ptr.has, n = items.length;
+    items.forEach(it => {
+      let tx, ty, k, damp;
+      if (mag) {
+        const a = it.i * (6.283 / n) + t * .9, rad = (narrow ? 46 : 64) + (it.i % 3) * (narrow ? 20 : 30);
+        tx = ptr.x + Math.cos(a) * rad; ty = ptr.y + Math.sin(a) * rad; k = .028; damp = .88;
+      } else {
+        tx = it.hx + Math.sin(t * it.sp + it.ph) * 10;
+        ty = it.hy + Math.cos(t * it.sp * .8 + it.ph) * 12; k = .04; damp = .86;
+      }
+      it.vx = (it.vx + (tx - it.x) * k * f) * Math.pow(damp, f);
+      it.vy = (it.vy + (ty - it.y) * k * f) * Math.pow(damp, f);
+      it.x += it.vx * f; it.y += it.vy * f;
+      draw(it, t);
+    });
+    // riso title drift
+    const o = Math.sin(t * .7) * 2;
+    hero.style.setProperty('--mx1', (-5 + o) + 'px'); hero.style.setProperty('--my1', (4 - o * .6) + 'px');
+    hero.style.setProperty('--mx2', (6 - o) + 'px');  hero.style.setProperty('--my2', (-3 + o * .5) + 'px');
+    if (visible) requestAnimationFrame(tick);
+  }
+  function blinkLoop(it) {
+    setTimeout(() => {
+      it.el.classList.add('blink');
+      setTimeout(() => { it.el.classList.remove('blink'); blinkLoop(it); }, 130);
+    }, 1800 + Math.random() * 4200);
+  }
+
+  layout();
+  new ResizeObserver(layout).observe(hero);
+  if (!reduce) {
+    items.filter(it => it.pupils.length).forEach(blinkLoop);
+    new IntersectionObserver(([e]) => {
+      const was = visible; visible = e.isIntersecting;
+      if (visible && !was) { last = performance.now(); requestAnimationFrame(tick); }
+    }).observe(hero);
+    requestAnimationFrame(tick);
+  } else {
+    items.forEach(it => draw(it, 0));
+  }
+
+  /* =============== LENS =============== */
+  const stage = $('#lensStage'), lens = $('#lens');
+  const lensLayers = [[$('.lens-teal', lens), -1.5, 1.2], [$('.lens-orange', lens), 1.5, -1.2]];
+  const zoomIn = $('#zoom');
+  let lx = .5, ly = .38, zoom = +zoomIn.value;
+  // regions measured on the 980 × 1120 crop of the sketch
+  const regions = [
+    { test: (x, y) => x > .8 && y > .55 && y < .86, name: 'Neighbouring roof', note: 'A second temple roof creeps in at the edge of the page.' },
+    { test: (x, y) => y < .31, name: 'Sōrin (spire)', note: 'Nine stacked rings on a mast; the finial sits at the very top.' },
+    { test: (x, y) => y < .5, name: 'Upper roof', note: 'Hatching follows the slope of the tiles.' },
+    { test: (x, y) => y < .68, name: 'Middle storey', note: 'Bracket clusters (tokyō) hold up the deep eaves.' },
+    { test: (x, y) => y < .81, name: 'Lower storey', note: 'Railings and panels, drawn in quick vertical ticks.' },
+    { test: () => true, name: 'Treeline', note: 'Scribbled foliage hides the base of the tower.' },
+  ];
+  function renderLens() {
+    const Wd = stage.clientWidth, Hd = stage.clientHeight, D = lens.offsetWidth;
+    const px = lx * Wd, py = ly * Hd;
+    lens.style.transform = `translate(${px - D / 2}px, ${py - D / 2}px)`;
+    lensLayers.forEach(([el, ox, oy]) => {
+      const size = `${Wd * zoom}px ${Hd * zoom}px`;
+      const pos = `${D / 2 - px * zoom + ox * zoom}px ${D / 2 - py * zoom + oy * zoom}px`;
+      el.style.webkitMaskSize = size; el.style.maskSize = size;
+      el.style.webkitMaskPosition = pos; el.style.maskPosition = pos;
+    });
+    const r = regions.find(r => r.test(lx, ly));
+    $('#specName').textContent = r.name;
+    $('#specNote').textContent = r.note;
+    $('#specPos').textContent = `x ${Math.round(lx * 980)} · y ${Math.round(ly * 1120)} px`;
+    $('#specZoom').textContent = zoom.toFixed(1) + '×';
+  }
+  function moveLensTo(e) {
+    const r = stage.getBoundingClientRect();
+    lx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    ly = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+    renderLens();
+  }
+  let dragging = false;
+  stage.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || dragging) moveLensTo(e); });
+  stage.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') moveLensTo(e); });
+  lens.addEventListener('pointerdown', e => { dragging = true; lens.setPointerCapture(e.pointerId); });
+  lens.addEventListener('pointermove', e => { if (dragging) moveLensTo(e); });
+  lens.addEventListener('pointerup', () => { dragging = false; });
+  stage.addEventListener('keydown', e => {
+    const step = e.shiftKey ? .08 : .02;
+    const m = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+    if (!m) return;
+    e.preventDefault();
+    lx = Math.max(0, Math.min(1, lx + m[0])); ly = Math.max(0, Math.min(1, ly + m[1]));
+    renderLens();
+  });
+  zoomIn.addEventListener('input', () => { zoom = +zoomIn.value; renderLens(); });
+  new ResizeObserver(renderLens).observe(stage);
+  renderLens();
+
+  /* =============== PRESS =============== */
+  const INKS = [
+    ['Teal', '#00838A'], ['Orange', '#FF6C2F'], ['Mint', '#82D8D5'], ['Yellow', '#FFE800'],
+    ['Bright Red', '#F15060'], ['Federal Blue', '#3D5588'], ['Black', '#1F1B17']
+  ];
+  const plates = { A: $('#plateA'), B: $('#plateB') };
+  const choice = { A: 0, B: 1 };
+  let mis = 6, angle = -35, edition = 1;
+  const misIn = $('#mis');
+
+  function paintPlates() {
+    plates.A.style.background = INKS[choice.A][1];
+    plates.B.style.background = INKS[choice.B][1];
+    const rad = angle * Math.PI / 180;
+    plates.B.style.transform = `translate(${(Math.cos(rad) * mis).toFixed(1)}px, ${(Math.sin(rad) * mis).toFixed(1)}px) rotate(${(mis * .045 * Math.sign(Math.cos(rad))).toFixed(2)}deg)`;
+    $('#nameA').textContent = INKS[choice.A][0];
+    $('#nameB').textContent = INKS[choice.B][0];
+    $('#misOut').textContent = mis + ' px';
+  }
+  document.querySelectorAll('.drum').forEach(drum => {
+    const key = drum.dataset.drum, group = $('.swatches', drum);
+    INKS.forEach(([name, hex], i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'sw'; b.style.setProperty('--c', hex);
+      b.setAttribute('role', 'radio'); b.setAttribute('aria-label', name);
+      b.setAttribute('aria-checked', i === choice[key]); b.tabIndex = i === choice[key] ? 0 : -1;
+      b.addEventListener('click', () => select(i));
+      b.addEventListener('keydown', e => {
+        const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (!d) return; e.preventDefault();
+        const n = (choice[key] + d + INKS.length) % INKS.length; select(n); group.children[n].focus();
+      });
+      group.appendChild(b);
+    });
+    function select(i) {
+      choice[key] = i;
+      [...group.children].forEach((b, j) => { b.setAttribute('aria-checked', j === i); b.tabIndex = j === i ? 0 : -1; });
+      paintPlates();
+    }
+  });
+  misIn.addEventListener('input', () => { mis = +misIn.value; paintPlates(); });
+  $('#nudgeBtn').addEventListener('click', () => {
+    angle = Math.random() * 360; mis = 4 + Math.round(Math.random() * 13);
+    misIn.value = mis; paintPlates();
+    if (!reduce) $('#printSheet').animate(
+      [{ transform: 'translate(0,0)' }, { transform: `translate(${mis / 2}px, -${mis / 3}px) rotate(.6deg)` }, { transform: 'translate(0,0)' }],
+      { duration: 320, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+  });
+
+  const pullBtn = $('#pullBtn'), roller = $('#roller');
+  pullBtn.addEventListener('click', async () => {
+    edition++;
+    $('#stamp').textContent = `No. ${String(edition).padStart(3, '0')} · 2-colour · A4`;
+    if (reduce) return;
+    pullBtn.disabled = true;
+    const hide = [{ clipPath: 'inset(0 0 100% 0)' }];
+    plates.A.animate(hide, { duration: 1, fill: 'forwards' });
+    plates.B.animate(hide, { duration: 1, fill: 'forwards' });
+    for (const p of [plates.A, plates.B]) {
+      const opts = { duration: 850, easing: 'cubic-bezier(.55,0,.35,1)', fill: 'forwards' };
+      roller.animate([{ top: '-22px', opacity: 1 }, { top: '100%', opacity: 1 }], opts);
+      await p.animate([{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)' }], opts).finished;
+      await new Promise(r => setTimeout(r, 120));
+    }
+    roller.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, fill: 'forwards' });
+    pullBtn.disabled = false;
+  });
+  paintPlates();
+
+  /* =============== PUZZLE =============== */
+  const C = 4, R = 3, N = C * R, EMPTY = N - 1;
+  const board = $('#board'), tiles = [];
+  let order = [...Array(N).keys()], moves = 0, solved = false;
+  let best = +store.get('rpl-best') || 0;
+  const showBest = () => $('#best').textContent = best || '–';
+  for (let id = 0; id < N; id++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tile' + (id === EMPTY ? ' empty' : '');
+    const c = id % C, r = Math.floor(id / C);
+    b.style.backgroundPosition = `${c * 100 / (C - 1)}% ${r * 100 / (R - 1)}%`;
+    b.setAttribute('aria-label', `Piece ${id + 1}`);
+    if (id === EMPTY) b.tabIndex = -1;
+    b.addEventListener('click', () => tryMove(id, true));
+    board.appendChild(b); tiles.push(b);
+  }
+  const adj = (p, q) => (Math.abs(p % C - q % C) + Math.abs(Math.floor(p / C) - Math.floor(q / C))) === 1;
+  function place() {
+    const e = order.indexOf(EMPTY);
+    order.forEach((id, pos) => {
+      const t = tiles[id];
+      t.style.transform = `translate(${(pos % C) * 100}%, ${Math.floor(pos / C) * 100}%)`;
+      t.classList.toggle('movable', !solved && id !== EMPTY && adj(pos, e));
+    });
+    $('#moves').textContent = moves;
+  }
+  function tryMove(id, user) {
+    if (solved) return false;
+    const p = order.indexOf(id), e = order.indexOf(EMPTY);
+    if (!adj(p, e)) {
+      if (user) { tiles[id].classList.remove('nope'); void tiles[id].offsetWidth; tiles[id].classList.add('nope'); }
+      return false;
+    }
+    [order[p], order[e]] = [order[e], order[p]];
+    if (user) { moves++; checkWin(); }
+    place();
+    return true;
+  }
+  function checkWin() {
+    if (!order.every((id, i) => id === i)) return;
+    solved = true; board.classList.add('solved');
+    if (!best || moves < best) { best = moves; store.set('rpl-best', best); showBest(); }
+    $('#status').textContent = `Solved in ${moves} moves. The cloud creatures thank you.`;
+    burst();
+  }
+  function shuffle() {
+    solved = false; board.classList.remove('solved'); moves = 0;
+    order = [...Array(N).keys()];
+    let prev = -1;
+    for (let i = 0; i < 90 || order.every((id, j) => id === j); i++) {
+      const e = order.indexOf(EMPTY);
+      const opts = order.map((_, p) => p).filter(p => adj(p, e) && p !== prev);
+      const p = opts[Math.floor(Math.random() * opts.length)];
+      [order[p], order[e]] = [order[e], order[p]]; prev = e;
+    }
+    $('#status').textContent = 'Shuffled. Tap a piece next to the gap to slide it.';
+    place();
+  }
+  board.addEventListener('keydown', e => {
+    // arrow = direction the tile travels into the gap
+    const e0 = order.indexOf(EMPTY), ec = e0 % C, er = Math.floor(e0 / C);
+    const src = { ArrowLeft: ec < C - 1 ? e0 + 1 : -1, ArrowRight: ec > 0 ? e0 - 1 : -1,
+                  ArrowUp: er < R - 1 ? e0 + C : -1, ArrowDown: er > 0 ? e0 - C : -1 }[e.key];
+    if (src === undefined) return;
+    e.preventDefault();
+    if (src >= 0) tryMove(order[src], true);
+  });
+  $('#shuffleBtn').addEventListener('click', shuffle);
+  const peekBtn = $('#peekBtn');
+  peekBtn.addEventListener('click', () => {
+    const on = !board.classList.contains('peek');
+    board.classList.toggle('peek', on); peekBtn.setAttribute('aria-pressed', on);
+  });
+
+  function burst() {
+    if (reduce) return;
+    const r = board.getBoundingClientRect(), kinds = ['bolt', 'blob', 'ring', 'cloud'];
+    for (let i = 0; i < 34; i++) {
+      const el = document.createElement('div');
+      const k = kinds[i % kinds.length];
+      el.className = 'confetti'; el.style.width = (k === 'cloud' ? 44 : 22) + 'px';
+      el.innerHTML = svgs[k](i % 3 ? 'var(--orange)' : 'var(--mint)');
+      document.body.appendChild(el);
+      const x0 = r.left + r.width / 2, y0 = r.top + r.height / 2;
+      const a = Math.random() * 6.283, v = 140 + Math.random() * 260;
+      const x1 = x0 + Math.cos(a) * v, y1 = y0 + Math.sin(a) * v - 120;
+      el.animate([
+        { transform: `translate(${x0}px, ${y0}px) rotate(0deg) scale(.4)`, opacity: 1 },
+        { transform: `translate(${x1}px, ${y1}px) rotate(${Math.random() * 360}deg) scale(1)`, opacity: 1, offset: .45 },
+        { transform: `translate(${x1 + Math.cos(a) * 40}px, ${y1 + 420}px) rotate(${Math.random() * 720}deg) scale(.9)`, opacity: 0 }
+      ], { duration: 1600 + Math.random() * 700, easing: 'cubic-bezier(.2,.7,.4,1)' }).finished.then(() => el.remove());
+    }
+  }
+
+  showBest();
+  shuffle();
+})();
+</script>
+<!-- artifact:end -->
+</body>
+</html>
