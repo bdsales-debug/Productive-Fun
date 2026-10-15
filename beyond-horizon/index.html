@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beyond the Last Horizon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="An interactive field atlas of imagined worlds: explore three illustrated landscapes and record what you find.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Marcellus&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&display=swap">
+<link rel="preload" as="image" href="images/chapter-01.jpg" fetchpriority="high">
+</head>
+<body data-chapter="1">
+<a class="skip" href="#begin">Skip to the story</a>
+
+<header class="chrome">
+  <p class="mark" aria-hidden="true">BTLH <span>Field record · vol. I</span></p>
+  <button type="button" class="journal-btn" id="journalBtn" aria-expanded="false" aria-controls="journal">
+    <span>Journal</span> <span class="count" id="count">0 / 11</span>
+  </button>
+</header>
+
+<nav class="rail" id="rail" aria-label="Chapters">
+  <ol>
+    <li><button type="button" data-go="1" aria-label="Chapter I, The Ember Ridge"><span>I</span></button></li>
+    <li><button type="button" data-go="2" aria-label="Chapter II, The Hollow Downs"><span>II</span></button></li>
+    <li><button type="button" data-go="3" aria-label="Chapter III, The Concrete Tide"><span>III</span></button></li>
+  </ol>
+  <div class="rail-line" aria-hidden="true"><span id="railFill"></span></div>
+</nav>
+
+<main>
+  <section class="story" id="story" aria-label="Chapters I and II">
+    <div class="stage" id="stage">
+      <div class="hero-copy" id="hero">
+        <p class="eyebrow">An open atlas of imagined places</p>
+        <h1>Beyond the<br>Last Horizon</h1>
+        <p class="subtitle">Every forgotten world leaves something behind.</p>
+        <button type="button" class="begin" id="begin"><span>Begin exploring</span><span class="begin-line" aria-hidden="true"></span></button>
+      </div>
+
+      <article class="note" id="note1" aria-labelledby="n1h">
+        <p class="eyebrow">Chapter I · Field note 01</p>
+        <h2 id="n1h">The Ember Ridge</h2>
+        <p>At the edge of the mapped world the mountains burn without heat. The last expedition left four marks on this ridge before the weather closed in.</p>
+        <p class="hint">Find the marks in the painting to record them.</p>
+      </article>
+
+      <figure class="plate" data-ch="1">
+        <div class="frame"><img src="images/chapter-01.jpg" width="1200" height="636" fetchpriority="high" decoding="async"
+          alt="A wanderer in a long coat holds out a hand to a flock of doves above snow-covered mountains lit orange by the low sun, under a deep slate-blue sky."></div>
+      </figure>
+      <article class="note note--two" id="note2" aria-labelledby="n2h">
+        <p class="eyebrow">Chapter II · Field note 02</p>
+        <h2 id="n2h"><span>The world</span> <span>remembers</span></h2>
+        <p>On the Hollow Downs the sky holds the shape of what used to live here. Walk far enough alone and it begins to keep pace with you.</p>
+        <p class="hint">Four marks were left on the downs.</p>
+      </article>
+
+      <figure class="plate" data-ch="2">
+        <div class="frame"><img src="images/chapter-02.jpg" width="1200" height="511" decoding="async"
+          alt="A small figure runs across a dark green hilltop beneath a vast grey dragon whose body and claws dissolve into a pale, cloud-streaked sky."></div>
+      </figure>
+      <div class="veil" aria-hidden="true"></div>
+      <div class="shade" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <div class="edges" aria-hidden="true">
+        <p class="edge edge--bl"><span class="edge-ch" id="edgeCh">Ch. I</span><span id="edgePlace">The Ember Ridge</span><span class="edge-co" id="edgeCo">46°34′N · 8°02′E · 3,412 m</span></p>
+        <p class="edge edge--br" id="edgeCue">Scroll to descend</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="epilogue" id="epilogue" aria-labelledby="epH">
+    <div class="ep-head">
+      <p class="eyebrow">Chapter III · Epilogue</p>
+      <h2 id="epH">The cities dream of the sea</h2>
+      <p class="lede">Some worlds do not end. They drift into ours, low over the rooftops, and most people keep their curtains closed.</p>
+      <p class="coords" id="ep-coords">Block 14 · eastern district · 7th floor</p>
+    </div>
+    <figure class="pano" id="pano">
+      <div class="pano-scroll" id="panoScroll" tabindex="0" aria-label="Chapter III painting. Scroll sideways to see all of it.">
+        <div class="frame frame--pano"><img src="images/chapter-03.jpg" width="643" height="329" loading="lazy" decoding="async"
+          alt="Pixel art of an enormous whale drifting past the balconies of a concrete apartment block, with more tower blocks and a few birds in the hazy distance."></div>
+      </div>
+      <figcaption><span class="drag-hint">Drag sideways to look along the street</span></figcaption>
+    </figure>
+  </section>
+
+  <section class="end" id="end" aria-labelledby="endH">
+    <p class="eyebrow">End of the record</p>
+    <h2 id="endH">The horizon keeps moving</h2>
+    <p class="tally" id="tally">You have recorded 0 of 11 discoveries.</p>
+    <p class="lede">These worlds belong to the artists who painted them. Wander them, borrow the feeling, and leave a horizon of your own for someone else to cross.</p>
+    <div class="end-actions">
+      <button type="button" class="text-btn" id="endJournal">Open the journal</button>
+      <button type="button" class="text-btn" id="toTop">Return to the ridge</button>
+    </div>
+  </section>
+</main>
+
+<footer class="credits">
+  <p>Artwork: Chapter I signed <span class="mono">@seiya_ingen</span>. Chapters II and III were supplied without a signature; the artists are not identified here. Field notes and places are fiction.</p>
+</footer>
+
+<div class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="panelTitle" hidden>
+  <button type="button" class="close" id="panelClose" aria-label="Close field note">×</button>
+  <p class="eyebrow" id="panelEyebrow"></p>
+  <h3 id="panelTitle"></h3>
+  <p class="coords" id="panelCoords"></p>
+  <p class="panel-note" id="panelNote"></p>
+  <p class="recorded" id="panelRecorded">Recorded in your journal</p>
+</div>
+
+<aside class="journal" id="journal" aria-labelledby="journalTitle" hidden>
+  <div class="journal-head">
+    <p class="eyebrow">Explorer’s journal</p>
+    <h2 id="journalTitle">Recorded discoveries</h2>
+    <p class="journal-count" id="journalCount"></p>
+    <button type="button" class="close" id="journalClose" aria-label="Close journal">×</button>
+  </div>
+  <ol class="entries" id="entries"></ol>
+  <div class="journal-foot">
+    <button type="button" class="text-btn" id="resetBtn">Clear the journal</button>
+    <span class="reset-confirm" id="resetConfirm" hidden>
+      Erase all <span id="resetN">0</span> entries?
+      <button type="button" class="text-btn danger" id="resetYes">Erase</button>
+      <button type="button" class="text-btn" id="resetNo">Keep</button>
+    </span>
+    <p class="status" id="journalStatus" role="status"></p>
+  </div>
+</aside>
+
+<p class="sr-only" id="live" aria-live="polite"></p>
+<script type="module" src="./src/main.ts"></script>
+</body>
+</html>

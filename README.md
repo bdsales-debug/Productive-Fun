@@ -21,3 +21,7 @@ Assets: `assets/cover.jpg` (the cover) and `assets/pagoda.png` (the sketch, crop
 ## Unkai-ji (pagoda-interior/)
 
 An explorable 3D interior of an imagined timber pagoda above a sea of clouds, built with Three.js and TypeScript. The pen sketch hangs inside it as a scroll. See [pagoda-interior/README.md](pagoda-interior/README.md).
+
+## Beyond the Last Horizon (beyond-horizon/)
+
+A scroll-driven, interactive story site built around three illustrations, with discoverable marks in each painting and an explorer's journal kept in the browser. See [beyond-horizon/README.md](beyond-horizon/README.md).
